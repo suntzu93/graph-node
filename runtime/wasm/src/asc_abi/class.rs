@@ -1,5 +1,3 @@
-use ethabi;
-
 use graph::{
     data::store::{self, scalar::Timestamp},
     runtime::{
@@ -520,21 +518,25 @@ pub enum EthereumValueKind {
     FixedArray,
     Array,
     Tuple,
+    Function,
 }
 
 impl EthereumValueKind {
-    pub(crate) fn get_kind(token: &ethabi::Token) -> Self {
-        match token {
-            ethabi::Token::Address(_) => EthereumValueKind::Address,
-            ethabi::Token::FixedBytes(_) => EthereumValueKind::FixedBytes,
-            ethabi::Token::Bytes(_) => EthereumValueKind::Bytes,
-            ethabi::Token::Int(_) => EthereumValueKind::Int,
-            ethabi::Token::Uint(_) => EthereumValueKind::Uint,
-            ethabi::Token::Bool(_) => EthereumValueKind::Bool,
-            ethabi::Token::String(_) => EthereumValueKind::String,
-            ethabi::Token::FixedArray(_) => EthereumValueKind::FixedArray,
-            ethabi::Token::Array(_) => EthereumValueKind::Array,
-            ethabi::Token::Tuple(_) => EthereumValueKind::Tuple,
+    pub(crate) fn get_kind(value: &graph::abi::DecodedValue) -> Self {
+        use graph::abi::DecodedValue;
+
+        match value {
+            DecodedValue::Bool(_) => Self::Bool,
+            DecodedValue::Int(_, _) => Self::Int,
+            DecodedValue::Uint(_, _) => Self::Uint,
+            DecodedValue::FixedBytes(_, _) => Self::FixedBytes,
+            DecodedValue::Address(_) => Self::Address,
+            DecodedValue::Function(_) => Self::Function,
+            DecodedValue::Bytes(_) => Self::Bytes,
+            DecodedValue::String(_) => Self::String,
+            DecodedValue::Array(_) => Self::Array,
+            DecodedValue::FixedArray(_) => Self::FixedArray,
+            DecodedValue::Tuple(_) => Self::Tuple,
         }
     }
 }
